@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade Tracker</title>
+    <meta name="theme-color" content="#3B82F6">
+    <meta name="description" content="Track your grades and calculate course averages">
+    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiR3JhZGUgVHJhY2tlciIsInNob3J0X25hbWUiOiJHcmFkZXMiLCJzdGFydF91cmwiOiIvIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI0Y5RkFGQiIsInRoZW1lX2NvbG9yIjoiIzNCODJGNiIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBITjJaeUI0Yld4dWN6MGlhSFIwY0RvdkwzZDNkeTUzTXk1dmNtY3ZNakF3TUM5emRtY2lJSFpwWlhkQ2IzZzlJakFnTUNBMU1qQWdOVEl3SWo0S0lDQThjbVZqZENCM2FXUjBhRDBpTlRJd0lpQm9aV2xuYUhROUlqVXlNQ0lpSUdacGJHdzlJaU16UWpneVJqWWlMejRLSUNBOGRHVjRkQ0I0UFNJME1EQWlJSGs5SWpFMU1DSWlJR1pwYkd3OUluZG9hWFJsSWlCbWIyNTBMWE5wZW1VOUlqUXdJaUIwWlhoMExXRnVZMmh2Y2owaWJXbGtaR3hsSWo1SGNtRmtaWE04TDNSbGVIUStDaUFnUEhSbGVIUWdlRDBpTkRBd0lpQjVQU0l4T1RBaUlHWnBiR3c5SW5kb2FYUmxJaUJtYjI1MExYTnBlbVU5SWpJNElpQjBaWGgwTFdGdVkyaHZjajBpYldsa1pHeGxJajVVY21GamEyVnlQQzkwWlhoMFBnbzhMM04yWno0PSIsInNpemVzIjoiNTEyeDUxMiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIn1dfQ==">
+    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MjAgNTIwIj4KICA8cmVjdCB3aWR0aD0iNTIwIiBoZWlnaHQ9IjUyMCIgZmlsbD0iIzNCODJGNiIvPgogIDx0ZXh0IHg9IjQwMCIgeT0iMTUwIiBmaWxsPSJ3aGl0ZSIgZm9udC1zaXplPSI0MCIgdGV4dC1hbmNob3I9Im1pZGRsZSI+R3JhZGVzPC90ZXh0PgogIDx0ZXh0IHg9IjQwMCIgeT0iMTkwIiBmaWxsPSJ3aGl0ZSIgZm9udC1zaXplPSIyOCIgdGV4dC1hbmNob3I9Im1pZGRsZSI+VHJhY2tlcjwvdGV4dD4KPC9zdmc+">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            min-height: 100vh;
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .header {
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .back-btn {
+            background: none;
+            border: none;
+            color: #007AFF;
+            font-size: 16px;
+            margin-right: 16px;
+            cursor: pointer;
+            padding: 8px;
+        }
+        
+        .header-title {
+            font-size: 20px;
+            font-weight: 600;
+            flex: 1;
+        }
+        
+        .content {
+            flex: 1;
+            padding: 16px;
+        }
+        
+        .average-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .average-label {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        
+        .average-value {
+            font-size: 36px;
+            font-weight: 700;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: none;
+            width: 100%;
+            text-align: left;
+        }
+        
+        .card:hover, .card:active {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .card-score {
+            font-size: 18px;
+            font-weight: 700;
+        }
+        
+        .card-subtitle {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .grade-score {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .add-btn {
+            background: #007AFF;
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-top: auto;
+            transition: background-color 0.2s;
+        }
+        
+        .add-btn:hover, .add-btn:active {
+            background: #0056CC;
+        }
+        
+        .empty-state {
+            text-align: center;
+            color: #666;
+            font-size: 16px;
+            margin: 60px 0;
+        }
+        
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 400px;
+            max-height: 80vh;
+            overflow: hidden;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .modal-btn {
+            background: none;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 8px;
+        }
+        
+        .modal-cancel {
+            color: #666;
+        }
+        
+        .modal-save {
+            color: #007AFF;
+            font-weight: 600;
+        }
+        
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .form-group {
+            padding: 20px;
+        }
+        
+        .form-field {
+            margin-bottom: 16px;
+        }
+        
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: #333;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.2s;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #007AFF;
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .green { color: #4CAF50; }
+        .red { color: #f44336; }
+        
+        @media (max-width: 640px) {
+            .container {
+                border-radius: 0;
+            }
+        }
+        
+        /* iOS-style safe area handling */
+        @supports (padding-top: env(safe-area-inset-top)) {
+            .header {
+                padding-top: calc(16px + env(safe-area-inset-top));
+            }
+            
+            .add-btn {
+                margin-bottom: env(safe-area-inset-bottom);
+            }
+        }
+        
+        /* Install prompt styles */
+        .install-prompt {
+            background: #007AFF;
+            color: white;
+            padding: 12px 16px;
+            text-align: center;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .install-prompt:hover {
+            background: #0056CC;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="installPrompt" class="install-prompt hidden">
+            📱 Install this app on your device for easy access
+        </div>
+        
+        <div class="header">
+            <button id="backBtn" class="back-btn hidden">← Back</button>
+            <h1 class="header-title" id="headerTitle">Grade Tracker</h1>
+        </div>
+        
+        <div class="content" id="content">
+            <!-- Content will be dynamically populated -->
+        </div>
+        
+        <button class="add-btn" id="addBtn">+ Add Course</button>
+    </div>
+    
+    <!-- Course Modal -->
+    <div id="courseModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="modal-btn modal-cancel" id="courseCancelBtn">Cancel</button>
+                <h2 class="modal-title">Add Course</h2>
+                <button class="modal-btn modal-save" id="courseSaveBtn">Save</button>
+            </div>
+            <div class="form-group">
+                <div class="form-field">
+                    <label class="form-label">Course Name</label>
+                    <input type="text" class="form-input" id="courseNameInput" placeholder="e.g., Math 101, Biology">
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Grade Modal -->
+    <div id="gradeModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="modal-btn modal-cancel" id="gradeCancelBtn">Cancel</button>
+                <h2 class="modal-title" id="gradeModalTitle">Add Grade</h2>
+                <button class="modal-btn modal-save" id="gradeSaveBtn">Save</button>
+            </div>
+            <div class="form-group">
+                <div class="form-field">
+                    <label class="form-label">Grade Name</label>
+                    <input type="text" class="form-input" id="gradeNameInput" placeholder="e.g., Exam 1, Homework 2">
+                </div>
+                <div class="form-field">
+                    <label class="form-label">Score</label>
+                    <input type="number" class="form-input" id="gradeScoreInput" placeholder="Points earned">
+                </div>
+                <div class="form-field">
+                    <label class="form-label">Total Points</label>
+                    <input type="number" class="form-input" id="gradeTotalInput" placeholder="Total possible points">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class GradeTracker {
+            constructor() {
+                this.courses = [];
+                this.selectedCourse = null;
+                this.editingGrade = null;
+                this.STORAGE_KEY = 'grade_tracker_courses';
+                
+                this.init();
+                this.setupPWA();
+            }
+            
+            init() {
+                this.loadData();
+                this.setupEventListeners();
+                this.render();
+            }
+            
+            setupPWA() {
+                // Register service worker
+                if ('serviceWorker' in navigator) {
+                    const swCode = `
+                        const CACHE_NAME = 'grade-tracker-v1';
+                        const urlsToCache = ['/'];
+                        
+                        self.addEventListener('install', event => {
+                            event.waitUntil(
+                                caches.open(CACHE_NAME)
+                                    .then(cache => cache.addAll(urlsToCache))
+                            );
+                        });
+                        
+                        self.addEventListener('fetch', event => {
+                            event.respondWith(
+                                caches.match(event.request)
+                                    .then(response => response || fetch(event.request))
+                            );
+                        });
+                    `;
+                    
+                    const blob = new Blob([swCode], { type: 'application/javascript' });
+                    const swUrl = URL.createObjectURL(blob);
+                    
+                    navigator.serviceWorker.register(swUrl);
+                }
+                
+                // Handle install prompt
+                let deferredPrompt;
+                const installPrompt = document.getElementById('installPrompt');
+                
+                window.addEventListener('beforeinstallprompt', (e) => {
+                    e.preventDefault();
+                    deferredPrompt = e;
+                    installPrompt.classList.remove('hidden');
+                });
+                
+                installPrompt.addEventListener('click', async () => {
+                    if (deferredPrompt) {
+                        deferredPrompt.prompt();
+                        const { outcome } = await deferredPrompt.userChoice;
+                        deferredPrompt = null;
+                        installPrompt.classList.add('hidden');
+                    }
+                });
+            }
+            
+            loadData() {
+                try {
+                    const data = localStorage.getItem(this.STORAGE_KEY);
+                    this.courses = data ? JSON.parse(data) : [];
+                } catch (e) {
+                    console.error('Error loading data:', e);
+                    this.courses = [];
+                }
+            }
+            
+            saveData() {
+                try {
+                    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.courses));
+                } catch (e) {
+                    console.error('Error saving data:', e);
+                }
+            }
+            
+            setupEventListeners() {
+                // Back button
+                document.getElementById('backBtn').addEventListener('click', () => {
+                    this.selectedCourse = null;
+                    this.render();
+                });
+                
+                // Add button
+                document.getElementById('addBtn').addEventListener('click', () => {
+                    if (this.selectedCourse) {
+                        this.showGradeModal();
+                    } else {
+                        this.showCourseModal();
+                    }
+                });
+                
+                // Course modal
+                document.getElementById('courseCancelBtn').addEventListener('click', () => {
+                    this.hideCourseModal();
+                });
+                
+                document.getElementById('courseSaveBtn').addEventListener('click', () => {
+                    this.addCourse();
+                });
+                
+                // Grade modal
+                document.getElementById('gradeCancelBtn').addEventListener('click', () => {
+                    this.hideGradeModal();
+                });
+                
+                document.getElementById('gradeSaveBtn').addEventListener('click', () => {
+                    this.addOrUpdateGrade();
+                });
+                
+                // Close modals on backdrop click
+                document.getElementById('courseModal').addEventListener('click', (e) => {
+                    if (e.target.id === 'courseModal') this.hideCourseModal();
+                });
+                
+                document.getElementById('gradeModal').addEventListener('click', (e) => {
+                    if (e.target.id === 'gradeModal') this.hideGradeModal();
+                });
+                
+                // Enter key handling
+                document.getElementById('courseNameInput').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') this.addCourse();
+                });
+            }
+            
+            calcAverage(grades) {
+                if (!grades || grades.length === 0) return 0;
+                const totalScore = grades.reduce((sum, g) => sum + g.score, 0);
+                const totalPoints = grades.reduce((sum, g) => sum + g.total, 0);
+                return totalPoints > 0 ? (totalScore / totalPoints) * 100 : 0;
+            }
+            
+            render() {
+                if (this.selectedCourse) {
+                    this.renderCourseView();
+                } else {
+                    this.renderCoursesView();
+                }
+            }
+            
+            renderCoursesView() {
+                document.getElementById('headerTitle').textContent = 'Grade Tracker';
+                document.getElementById('backBtn').classList.add('hidden');
+                document.getElementById('addBtn').textContent = '+ Add Course';
+                
+                const content = document.getElementById('content');
+                
+                if (this.courses.length === 0) {
+                    content.innerHTML = '<div class="empty-state">No courses yet. Add your first course!</div>';
+                    return;
+                }
+                
+                content.innerHTML = this.courses.map(course => {
+                    const avg = this.calcAverage(course.grades);
+                    const colorClass = avg >= 70 ? 'green' : 'red';
+                    
+                    return `
+                        <button class="card" onclick="gradeTracker.selectCourse('${course.id}')" oncontextmenu="gradeTracker.deleteCourse('${course.id}'); return false;">
+                            <div class="card-header">
+                                <div>
+                                    <div class="card-title">${course.name}</div>
+                                    <div class="card-subtitle">${course.grades.length} grade${course.grades.length !== 1 ? 's' : ''}</div>
+                                </div>
+                                <div class="card-score ${colorClass}">${avg.toFixed(1)}%</div>
+                            </div>
+                        </button>
+                    `;
+                }).join('');
+            }
+            
+            renderCourseView() {
+                document.getElementById('headerTitle').textContent = this.selectedCourse.name;
+                document.getElementById('backBtn').classList.remove('hidden');
+                document.getElementById('addBtn').textContent = '+ Add Grade';
+                
+                const content = document.getElementById('content');
+                const avg = this.calcAverage(this.selectedCourse.grades);
+                const colorClass = avg >= 70 ? 'green' : 'red';
+                
+                let html = `
+                    <div class="average-card">
+                        <div class="average-label">Course Average</div>
+                        <div class="average-value ${colorClass}">${avg.toFixed(1)}%</div>
+                    </div>
+                `;
+                
+                if (this.selectedCourse.grades.length === 0) {
+                    html += '<div class="empty-state">No grades yet. Add your first grade!</div>';
+                } else {
+                    html += this.selectedCourse.grades.map(grade => {
+                        const percentage = grade.total > 0 ? ((grade.score / grade.total) * 100).toFixed(1) : 0;
+                        
+                        return `
+                            <button class="card" onclick="gradeTracker.editGrade('${grade.id}')" oncontextmenu="gradeTracker.deleteGrade('${grade.id}'); return false;">
+                                <div class="card-header">
+                                    <div class="card-title">${grade.name}</div>
+                                    <div class="grade-score">${grade.score}/${grade.total} (${percentage}%)</div>
+                                </div>
+                            </button>
+                        `;
+                    }).join('');
+                }
+                
+                content.innerHTML = html;
+            }
+            
+            selectCourse(courseId) {
+                this.selectedCourse = this.courses.find(c => c.id === courseId);
+                this.render();
+            }
+            
+            showCourseModal() {
+                document.getElementById('courseNameInput').value = '';
+                document.getElementById('courseModal').classList.remove('hidden');
+                setTimeout(() => document.getElementById('courseNameInput').focus(), 100);
+            }
+            
+            hideCourseModal() {
+                document.getElementById('courseModal').classList.add('hidden');
+            }
+            
+            showGradeModal(grade = null) {
+                this.editingGrade = grade;
+                
+                if (grade) {
+                    document.getElementById('gradeModalTitle').textContent = 'Edit Grade';
+                    document.getElementById('gradeNameInput').value = grade.name;
+                    document.getElementById('gradeScoreInput').value = grade.score;
+                    document.getElementById('gradeTotalInput').value = grade.total;
+                } else {
+                    document.getElementById('gradeModalTitle').textContent = 'Add Grade';
+                    document.getElementById('gradeNameInput').value = '';
+                    document.getElementById('gradeScoreInput').value = '';
+                    document.getElementById('gradeTotalInput').value = '';
+                }
+                
+                document.getElementById('gradeModal').classList.remove('hidden');
+                setTimeout(() => document.getElementById('gradeNameInput').focus(), 100);
+            }
+            
+            hideGradeModal() {
+                document.getElementById('gradeModal').classList.add('hidden');
+                this.editingGrade = null;
+            }
+            
+            addCourse() {
+                const name = document.getElementById('courseNameInput').value.trim();
+                if (!name) {
+                    alert('Please enter a course name');
+                    return;
+                }
+                
+                const newCourse = {
+                    id: Date.now().toString(),
+                    name: name,
+                    grades: []
+                };
+                
+                this.courses.push(newCourse);
+                this.saveData();
+                this.hideCourseModal();
+                this.render();
+            }
+            
+            deleteCourse(courseId) {
+                if (confirm('Are you sure you want to delete this course and all its grades?')) {
+                    this.courses = this.courses.filter(c => c.id !== courseId);
+                    this.saveData();
+                    if (this.selectedCourse && this.selectedCourse.id === courseId) {
+                        this.selectedCourse = null;
+                    }
+                    this.render();
+                }
+            }
+            
+            addOrUpdateGrade() {
+                const name = document.getElementById('gradeNameInput').value.trim();
+                const score = parseFloat(document.getElementById('gradeScoreInput').value);
+                const total = parseFloat(document.getElementById('gradeTotalInput').value);
+                
+                if (!name || isNaN(score) || isNaN(total) || total <= 0) {
+                    alert('Please fill in all fields with valid numbers');
+                    return;
+                }
+                
+                if (this.editingGrade) {
+                    // Update existing grade
+                    this.editingGrade.name = name;
+                    this.editingGrade.score = score;
+                    this.editingGrade.total = total;
+                } else {
+                    // Add new grade
+                    const newGrade = {
+                        id: Date.now().toString(),
+                        name: name,
+                        score: score,
+                        total: total
+                    };
+                    this.selectedCourse.grades.push(newGrade);
+                }
+                
+                this.saveData();
+                this.hideGradeModal();
+                this.render();
+            }
+            
+            editGrade(gradeId) {
+                const grade = this.selectedCourse.grades.find(g => g.id === gradeId);
+                if (grade) {
+                    this.showGradeModal(grade);
+                }
+            }
+            
+            deleteGrade(gradeId) {
+                if (confirm('Are you sure you want to delete this grade?')) {
+                    this.selectedCourse.grades = this.selectedCourse.grades.filter(g => g.id !== gradeId);
+                    this.saveData();
+                    this.render();
+                }
+            }
+        }
+        
+        // Initialize the app
+        const gradeTracker = new GradeTracker();
+    </script>
+</body>
+</html>
